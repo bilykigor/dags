@@ -1,13 +1,13 @@
+from newsfeed.browser import get_browser_aws
 from selenium.webdriver.common.by import By
-from time import sleep
-from app import config
-import app.utils.db as db_utils
+from newsfeed import config
+import newsfeed.utils.db as db_utils
 import logging
-from newsfeed.browser import *
+import sys
 
 def get_news_vmo24():
-    browser = get_browser_aws()
-
+    browser=get_browser_aws()
+    
     source='https://vmo24.ru/'
     browser.get(source)
     browser.implicitly_wait(5)
@@ -28,11 +28,11 @@ def get_news_vmo24():
         records.append(record)
         logging.info(record['title'])
         
-    # if len(records)>0:
-    #     conn = db_utils.create_mysql_connector(config.db_news)
-    #     db_utils.insert_records_to_table("news",records,'title', conn)
-    # else:
-    #     browser = None
-    #     logging.warning(f'Failed to read news from {source}')
-                
+    if len(records)>0:
+        conn = db_utils.create_mysql_connector(config.db_news)
+        db_utils.insert_records_to_table("news",records,'title', conn)
+        len(records)
+    else:
+        logging.warning(f'Failed to read news from {source}')
+        sys.exit(1)
         

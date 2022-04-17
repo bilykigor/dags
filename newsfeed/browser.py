@@ -1,3 +1,7 @@
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium import webdriver
+
 def get_browser_aws(browser=None):
     if browser is None:
         options = Options()
