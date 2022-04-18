@@ -9,6 +9,7 @@ def get_news_vmo24():
     browser=get_browser_aws()
     
     source='https://vmo24.ru/'
+    name='Вести подмосковья'
     browser.get(source)
     browser.implicitly_wait(5)
     

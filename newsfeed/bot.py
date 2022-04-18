@@ -20,7 +20,7 @@ def send_news():
         
         failed=False
         for ix,row in news.iterrows():
-            text = f"{row.title}\n{row.href}"
+            text = f"{row.date}\n{row.title}\n{row.href}"
             query=f'https://api.telegram.org/bot{config.token}/sendMessage?chat_id={config.channel["id"]}&text={text}'
             res=requests.post(query)
             if res.status_code!=200:

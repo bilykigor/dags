@@ -9,6 +9,7 @@ def get_news_belgorod():
     browser=get_browser_aws()
     
     source='https://yandex.ru/news/region/belgorod'
+    name='Яндекс.Новости Белгорода'
     browser.get(source)
     browser.implicitly_wait(5)
     
