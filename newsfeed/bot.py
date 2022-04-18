@@ -27,6 +27,7 @@ def send_news():
                 logging.error(f'Failed to send mgs \n {text}')
                 logging.error(query)
                 failed=True
+                sleep(5)
             sleep(1)
         
         if failed:
