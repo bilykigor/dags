@@ -40,7 +40,8 @@ with DAG(
     
     send_news = PythonOperator(
     task_id='send_news',
-    python_callable=send_news,     
+    python_callable=send_news,   
+    trigger_rule='all_done',  
     #provide_context=True, 
     #do_xcom_push=True,     
     dag=dag,)
