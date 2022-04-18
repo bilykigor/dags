@@ -20,6 +20,21 @@ def select_news(last_id):
     return news
 
 
+def select_last_id():
+    db_connector = create_mysql_connector(config.db_news)
+    
+    query = f"SELECT * FROM variables where name='last_id'" 
+    
+    data = read_sql(query,db_connector)
+    
+    if data.shape[0]==0:
+        return None
+    
+    last_id = data.value.values[0]
+    
+    return last_id
+
+
 def get_model_s3_index(model_type, biz_id=None, sort_by="date"):
     """
     Counts invoices applicable for training model and returns their total count for each biz

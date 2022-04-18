@@ -17,7 +17,9 @@ def get_news_belgorod():
     records=[]
     for li in news:
         record={}
-        record['href'] = li.find_element(By.TAG_NAME,'a').get_attribute('href')
+        href = li.find_element(By.TAG_NAME,'a').get_attribute('href')
+        href = href.split('?lang')[0]
+        record['href'] = href
         record['title'] = li.text
         record['source'] = source
         records.append(record)

@@ -12,6 +12,7 @@ from airflow.operators.python_operator import PythonOperator
 from newsfeed.parsers.news_belgorod import get_news_belgorod
 from newsfeed.parsers.vmo24 import get_news_vmo24
 from newsfeed.bot import send_news
+import logging
 
 
 
@@ -27,20 +28,22 @@ with DAG(
 	schedule_interval='@hourly',       # set interval
 	catchup=False,                    # indicate whether or not Airflow should do any runs for intervals between the start_date and the current date that haven't been run thus far
 ) as dag:
-    # get_news_belgorod = PythonOperator(
-    # task_id='get_news_belgorod',
-    # python_callable=get_news_belgorod,           
-    # dag=dag,)
+    get_news_belgorod = PythonOperator(
+    task_id='get_news_belgorod',
+    python_callable=get_news_belgorod,           
+    dag=dag,)
     
-    # get_news_vmo24 = PythonOperator(
-    # task_id='get_news_vmo24',
-    # python_callable=get_news_vmo24,           
-    # dag=dag,)
+    get_news_vmo24 = PythonOperator(
+    task_id='get_news_vmo24',
+    python_callable=get_news_vmo24,           
+    dag=dag,)
     
     send_news = PythonOperator(
     task_id='send_news',
-    python_callable=send_news,           
+    python_callable=send_news,     
+    #provide_context=True, 
+    #do_xcom_push=True,     
     dag=dag,)
     
-    #get_news_belgorod>>get_news_vmo24     
+    [get_news_belgorod,get_news_vmo24]>> send_news  
 

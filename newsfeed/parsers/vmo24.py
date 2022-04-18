@@ -31,7 +31,7 @@ def get_news_vmo24():
     if len(records)>0:
         conn = db_utils.create_mysql_connector(config.db_news)
         db_utils.insert_records_to_table("news",records,'title', conn)
-        len(records)
+        return len(records)
     else:
         logging.warning(f'Failed to read news from {source}')
         sys.exit(1)

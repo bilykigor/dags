@@ -18,11 +18,7 @@ db_news = {
 #     }
 # }
 
-telegram = {
-    "session_name": os.environ.get('SESSION_NAME', 'newsfeed'), 
-    "api_id": int(os.environ.get('API_ID', 0)), 
-    "api_hash": os.environ.get('API_HASH', None)
-}
+token = os.environ.get('BOT_TOKEN', None)
 
 channel = {
     "id": int(os.environ.get('CHANNEL_ID', 0)),
