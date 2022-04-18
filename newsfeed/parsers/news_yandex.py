@@ -4,34 +4,45 @@ from newsfeed import config
 import newsfeed.utils.db as db_utils
 import logging
 import sys
+from time import sleep
     
-def get_news_yandex(region):
-    source=f'https://yandex.ru/news/region/{region}'
-    logging.info(f'Browsing to {source}')
-    #name='Яндекс.Новости Белгорода'
+def get_news_yandex(regions):
+    browser = None
+    failed = False
+    for region in regions:
+        source=f'https://yandex.ru/news/region/{region}'
+        logging.info(f'Browsing to {source}')
+        #name='Яндекс.Новости Белгорода'
 
-    browser=get_browser_aws()
-    browser.get(source)
-    browser.implicitly_wait(5)
-    
-    news = browser.find_elements(By.CLASS_NAME,'mg-card__title')
-    logging.info(f'Reading {len(news)} news from main page {source}')
-    records=[]
-    for li in news:
-        record={}
-        href = li.find_element(By.TAG_NAME,'a').get_attribute('href')
-        href = href.split('?lang')[0]
-        record['href'] = href
-        record['title'] = li.text
-        record['source'] = source
-        records.append(record)
-        logging.info(record['title'])
+        browser=get_browser_aws(browser)
+        browser.get(source)
+        browser.implicitly_wait(5)
         
-    if len(records)>0:
-        conn = db_utils.create_mysql_connector(config.db_news)
-        db_utils.insert_records_to_table("news",records,'title', conn)
-        return len(records)
-    else:
-        logging.warning(f'Failed to read news from {source}')
+        news = browser.find_elements(By.CLASS_NAME,'mg-card__title')
+        logging.info(f'Reading {len(news)} news from main page {source}')
+        records=[]
+        for li in news:
+            record={}
+            href = li.find_element(By.TAG_NAME,'a').get_attribute('href')
+            href = href.split('?lang')[0]
+            record['href'] = href
+            record['title'] = li.text
+            record['source'] = source
+            records.append(record)
+            logging.info(record['title'])
+            
+        if len(records)>0:
+            conn = db_utils.create_mysql_connector(config.db_news)
+            db_utils.insert_records_to_table("news",records,'title', conn)
+            sleep(30)
+        else:
+            logging.warning(f'Failed to read news from {source}')
+            browser = None
+            failed=True
+            sleep(120)
+         
+    if failed:        
         sys.exit(1)
+
+        
         

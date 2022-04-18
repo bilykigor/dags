@@ -69,16 +69,16 @@ with DAG(
         'kazan',
         'yoshkar-ola'
     ]    
-    for region in regions:
-        task = PythonOperator(
-        task_id=f'get_news_{region}',
-        op_args=[region],
-        python_callable=get_news_yandex,  
-        retries=2,
-        retry_delay=60 * 20,        # 20 minutes  
-        dag=dag,)
-        
-        task>>send_news
+    
+    get_news_yandex = PythonOperator(
+    task_id=f'get_news_yandex',
+    op_args=[regions],
+    python_callable=get_news_yandex,  
+    retries=2,
+    retry_delay=60 * 20,        # 20 minutes  
+    dag=dag,)
+    
+    get_news_yandex>>send_news
     
     get_news_vmo24 = PythonOperator(
     task_id='get_news_vmo24',
