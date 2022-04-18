@@ -9,7 +9,7 @@ from airflow.operators.python_operator import PythonOperator
 # from airflow.operators.docker_operator import DockerOperator
 # from airflow.providers.http.sensors.http import HttpSensor
 
-from newsfeed.parsers.news_belgorod import get_news_belgorod
+from newsfeed.parsers.news_yandex import get_news_yandex
 from newsfeed.parsers.vmo24 import get_news_vmo24
 from newsfeed.bot import send_news
 import logging
@@ -28,16 +28,6 @@ with DAG(
 	schedule_interval='@hourly',       # set interval
 	catchup=False,                    # indicate whether or not Airflow should do any runs for intervals between the start_date and the current date that haven't been run thus far
 ) as dag:
-    get_news_belgorod = PythonOperator(
-    task_id='get_news_belgorod',
-    python_callable=get_news_belgorod,           
-    dag=dag,)
-    
-    get_news_vmo24 = PythonOperator(
-    task_id='get_news_vmo24',
-    python_callable=get_news_vmo24,           
-    dag=dag,)
-    
     send_news = PythonOperator(
     task_id='send_news',
     python_callable=send_news,   
@@ -46,5 +36,54 @@ with DAG(
     #do_xcom_push=True,     
     dag=dag,)
     
-    [get_news_belgorod,get_news_vmo24]>> send_news  
+    regions=['belgorod','bryansk',
+        'vladimir',
+        'voronezh',
+        'ivanovo',
+        'Kaluga',
+        'kostroma',
+        'kursk',
+        'lipetsk',
+        'moscow',
+        'Orel',
+        'ryazan',
+        'smolensk',
+        'tambov',
+        'tver',
+        'tula',
+        'saint_petersburg',
+        'syktyvkar',
+        'arhangelsk',
+        'nenets_autonomous_okrug',
+        'vologda',
+        'saint-petersburg_and_leningrad_oblast',
+        'murmansk',
+        'pskov',
+        'Republic_of_Ingushetia',
+        'Nalchik',
+        'krasnodar',
+        'stavropol',
+        'astrahan',
+        'volgograd',
+        'rostov-na-donu',
+        'kazan',
+        'yoshkar-ola'
+    ]    
+    for region in regions:
+        task = PythonOperator(
+        task_id=f'get_news_{region}',
+        op_args=[region],
+        python_callable=get_news_yandex,  
+        retries=2,
+        retry_delay=60 * 20,        # 20 minutes  
+        dag=dag,)
+        
+        task>>send_news
+    
+    get_news_vmo24 = PythonOperator(
+    task_id='get_news_vmo24',
+    python_callable=get_news_vmo24,           
+    dag=dag,)
+    
+    get_news_vmo24>> send_news  
 

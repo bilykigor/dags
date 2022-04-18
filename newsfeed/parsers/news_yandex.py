@@ -4,17 +4,18 @@ from newsfeed import config
 import newsfeed.utils.db as db_utils
 import logging
 import sys
-
-def get_news_belgorod():
-    browser=get_browser_aws()
     
-    source='https://yandex.ru/news/region/belgorod'
-    name='Яндекс.Новости Белгорода'
+def get_news_yandex(region):
+    source=f'https://yandex.ru/news/region/{region}'
+    logging.info(f'Browsing to {source}')
+    #name='Яндекс.Новости Белгорода'
+
+    browser=get_browser_aws()
     browser.get(source)
     browser.implicitly_wait(5)
     
     news = browser.find_elements(By.CLASS_NAME,'mg-card__title')
-    logging.info(f'Reading {len(news)} news from main page')
+    logging.info(f'Reading {len(news)} news from main page {source}')
     records=[]
     for li in news:
         record={}
