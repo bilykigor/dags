@@ -4,6 +4,7 @@ from newsfeed import config
 import newsfeed.utils.db as db_utils
 import logging
 import sys
+from time import sleep
 
 def get_news_vmo24():
     browser=get_browser_aws()
@@ -11,7 +12,7 @@ def get_news_vmo24():
     source='https://vmo24.ru/'
     name='Вести подмосковья'
     browser.get(source)
-    browser.implicitly_wait(5)
+    sleep(5)
     
     news = browser.find_elements(By.CLASS_NAME,'b-head')
     logging.info(f'Reading {len(news)} news from main page')
